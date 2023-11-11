@@ -22,14 +22,14 @@ from app.utils.response import response
 __version__ = "/v1"
 __bp__ = "/admin"
 url_prefix = API_PREFIX + __version__ + __bp__
-tag = Tag(name="管理员", description="管理用户、角色、权限")
+tag = Tag(name="admin", description="manage users")
 api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
 
 
 @api.get("/permissions", responses={"200": PermissionsResponse})
 @role_required(name="获取所有权限", module=PermissionGroup.PERMISSION, uuid="913aa468-634d-42d4-8a75-6d0ed16723fb")
 def get_all_permissions():
-    """获取所有权限"""
+    """get all permissions"""
     permissions = db.session.query(Permission).all()
     data = {}
     for p in permissions:
@@ -47,7 +47,7 @@ def get_all_permissions():
 @api.post("/users")
 @role_required(name="添加用户", module=PermissionGroup.USER, uuid="82f206e8-a172-4e37-adfd-0a39e8a9fb8e")
 def add_user(body: RegisterBody):
-    """添加用户"""
+    """add user"""
     user = db.session.query(User).filter(User.username == body.username).first()
     if user:
         raise UserExistException()
@@ -57,7 +57,7 @@ def add_user(body: RegisterBody):
 
 
 @api.get("/users", responses={"200": GetUsersResponse})
-@role_required(name="获取所有用户", module=PermissionGroup.USER, uuid="ad62bda9-b1fb-4229-8b49-1f7acc6cadbc")
+@role_required(name="get users", module=PermissionGroup.USER, uuid="ad62bda9-b1fb-4229-8b49-1f7acc6cadbc")
 def get_users(query: UsersQuery):
     """获取所有用户"""
     offset, limit = get_offset_limit(query.page, query.page_size)
@@ -71,7 +71,7 @@ def get_users(query: UsersQuery):
 @api.put("/password/<id>")
 @role_required(name="修改用户密码", module=PermissionGroup.USER, uuid="4f0d0f12-b552-41dc-8db3-fde11fdb2405")
 def modify_user_password(path: UserPath, body: ModifyPasswordBody):
-    """修改用户密码"""
+    """modify password"""
     user = db.session.query(User).filter(and_(User.id == path.id, User.is_super.is_(False))).first()
     if user is None:
         raise UserNotExistException()
@@ -83,7 +83,7 @@ def modify_user_password(path: UserPath, body: ModifyPasswordBody):
 @api.delete("/users/<id>")
 @role_required(name="删除用户", module=PermissionGroup.USER, uuid="6502e822-f3da-4d42-a6de-65321b455178")
 def delete_user(path: UserPath):
-    """删除用户"""
+    """delete user"""
     user = db.session.query(User).filter(and_(User.id == path.id, User.is_super.is_(False))).first()
     if user is None:
         raise UserNotExistException()
@@ -95,7 +95,7 @@ def delete_user(path: UserPath):
 @api.post("/roles")
 @role_required(name="新建角色", module=PermissionGroup.ROLE, uuid="4b3ba348-e860-41b6-9d97-fd290e713e76")
 def create_role(body: CreateRoleBody):
-    """新建角色"""
+    """create role"""
     validate_name(Role, body.name)
     Role.create(name=body.name, describe=body.describe, permission_ids=body.permission_ids)
 
@@ -105,7 +105,7 @@ def create_role(body: CreateRoleBody):
 @api.get("/roles", responses={"200": GetRolesResponse})
 @role_required(name="获取所有角色", module=PermissionGroup.ROLE, uuid="8abf94aa-b94a-465a-a67b-2e8acba9c59a")
 def get_roles(query: RolesQuery):
-    """获取所有角色"""
+    """get roles"""
     offset, limit = get_offset_limit(query.page, query.page_size)
     roles = db.session.query(Role).offset(offset).limit(limit).all()
     total, total_page = get_total_page(User, [], limit)
@@ -116,7 +116,7 @@ def get_roles(query: RolesQuery):
 @api.put("/roles/<id>")
 @role_required(name="更新角色", module=PermissionGroup.ROLE, uuid="cd0de18c-2147-41b6-88f8-023cef35640d")
 def update_role(path: RolePath, body: UpdateRoleBody):
-    """更新角色"""
+    """update role"""
     role = db.session.query(Role).filter(Role.id == path.id).first()
     if role is None:
         raise RoleNotExistException()
@@ -128,7 +128,7 @@ def update_role(path: RolePath, body: UpdateRoleBody):
 @api.delete("/roles/<int:id>")
 @role_required(name="删除角色", module="角色", uuid="cdb35c5d-f5c9-4ff5-ba6c-5bba8349a176")
 def delete_role(path: RolePath):
-    """删除角色"""
+    """delete role"""
     role = db.session.query(Role).filter(Role.id == path.id).first()
     if role is None:
         raise RoleNotExistException()
@@ -142,7 +142,7 @@ def delete_role(path: RolePath):
 @api.put("users/roles")
 @role_required(name="给用户添加角色", module=PermissionGroup.USER, uuid="a6e4d9c4-6a8c-4095-a4a9-49d7ab2d8790")
 def set_user_role(body: UserRoleBody):
-    """给用户添加角色"""
+    """set role"""
     user = db.session.query(User).filter(and_(User.id == body.id, User.is_super.is_(False))).first()
     if user is None:
         raise UserNotExistException()
@@ -154,7 +154,7 @@ def set_user_role(body: UserRoleBody):
 @api.put("roles/permissions")
 @role_required(name="给角色添加权限", module=PermissionGroup.ROLE, uuid="376f7d69-cd14-41c2-a4d2-ebdd4ca238bc")
 def set_role_permission(body: RolePermissionBody):
-    """给角色添加权限"""
+    """set role permission"""
     role = db.session.query(Role).filter(Role.id == body.id).first()
     if role is None:
         raise RoleNotExistException()
