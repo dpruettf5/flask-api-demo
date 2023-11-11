@@ -6,16 +6,16 @@ from pydantic import BaseModel, Field
 
 
 class PageModel(BaseModel):
-    page: int = Field(1, ge=1, description="页码")
-    page_size: int = Field(15, ge=1, description="每页个数")
+    page: int = Field(1, ge=1, description="page")
+    page_size: int = Field(15, ge=1, description="page size")
 
 
 class IdModel(BaseModel):
-    id: int = Field(..., description="ID")
+    id: int = Field(..., description="id")
 
 
 class IdStringModel(BaseModel):
-    id: str = Field(..., description="字符串ID")
+    id: str = Field(..., description="id")
 
 
 class FileModel(BaseModel):
@@ -23,5 +23,5 @@ class FileModel(BaseModel):
 
 
 class JsonResponse(BaseModel):
-    code: int = Field(default=0, description="状态码")
-    message: str = Field(default="ok", description="异常信息")
+    code: int = Field(default=0, description="code")
+    message: str = Field(default="ok", description="message")
