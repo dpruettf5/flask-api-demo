@@ -24,14 +24,14 @@ from app.utils.response import response
 __version__ = "/v1"
 __bp__ = "/job"
 url_prefix = API_PREFIX + __version__ + __bp__
-tag = Tag(name="任务", description="任务管理")
+tag = Tag(name="task", description="task management")
 api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
 
 
 @api.post("")
 # @role_required(name="添加异步任务", module=PermissionGroup.JOB, uuid="26017994-9c06-11eb-84be-8cec4baea5d8")
 def add_job():
-    """添加异步任务"""
+    """add job"""
     job_id = str(uuid1())
     default_queue.enqueue(job_test, args=(1, 4, job_id), job_id=job_id, job_timeout=3600)
     return response(data=job_id)
@@ -40,7 +40,7 @@ def add_job():
 @api.get("", responses={"200": JobResponse})
 # @role_required(name="查询异步任务", module=PermissionGroup.JOB, uuid="46ffb3d9-9c06-11eb-981b-8cec4baea5d8")
 def query_job(query: JobQuery):
-    """查询异步任务"""
+    """query job"""
     page = query.page
     page_size = query.page_size
     status = query.status
@@ -93,10 +93,8 @@ def query_job(query: JobQuery):
                                "ttl": job.result_ttl,
                                })
 
-    # 按时间降序
     job_attributes = sorted(job_attributes, key=lambda k: k["ended_at"], reverse=True)
 
-    # 分页
     total = len(job_ids)
     total_page = math.ceil(total / page_size)
     offset = (page - 1) * page_size
@@ -107,7 +105,7 @@ def query_job(query: JobQuery):
 @api.delete("/<job_id>")
 # @role_required(name="删除异步任务", module=PermissionGroup.JOB, uuid="4e440bab-9c06-11eb-8b14-8cec4baea5d8")
 def del_job(path: JobPath):
-    """任务删除"""
+    """delete job"""
     try:
         job = Job.fetch(path.job_id, connection=rq2.connection)
     except NoSuchJobError:
@@ -121,7 +119,7 @@ def del_job(path: JobPath):
 @api.put("/<job_id>")
 @role_required(name="重试异步任务", module=PermissionGroup.JOB, uuid="54f0ed18-9c06-11eb-9220-8cec4baea5d8")
 def retry_job(path: JobPath):
-    """重试异步任务"""
+    """retry job"""
     try:
         job = Job.fetch(path.job_id, connection=rq2.connection)
     except NoSuchJobError:
