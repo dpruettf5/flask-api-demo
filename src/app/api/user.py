@@ -16,14 +16,13 @@ from app.utils.response import response
 __version__ = "/v1"
 __bp__ = "/user"
 url_prefix = API_PREFIX + __version__ + __bp__
-tag = Tag(name="用户", description="用户注册、登录、个人管理")
+tag = Tag(name="user", description="User registration, login, and personal management")
 api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
 
 
 @api.post("/register")
 def register(body: RegisterBody):
-    """用户注册"""
-    # 用户注册时默认没有角色
+    """user registration"""
     body.role_ids = []
     User.create(body)
     return response()
@@ -31,7 +30,7 @@ def register(body: RegisterBody):
 
 @api.post("/login")
 def login(body: LoginBody):
-    """用户登录"""
+    """user login"""
     user = User.verify_login(body.username, body.password)
     access_token, refresh_token = get_token(user)
     return response(data={"access_token": access_token, "refresh_token": refresh_token})
@@ -40,7 +39,7 @@ def login(body: LoginBody):
 @api.get("/info", responses={"200": UserInfoResponse})
 @login_required
 def get_info():
-    """获取用户信息"""
+    """get info"""
     user = get_current_user()
     data = {
         "username": user.username,
@@ -52,7 +51,7 @@ def get_info():
 @api.put("/password")
 @login_required
 def modify_password(body: PasswordBody):
-    """修改密码"""
+    """modify password"""
     user = get_current_user()
     user.modify_password(body.old_password, body.new_password, body.confirm_password)
     return response()
@@ -61,7 +60,7 @@ def modify_password(body: PasswordBody):
 @api.get("/permissions")
 @login_required
 def get_permissions():
-    """获取用户权限"""
+    """get permissions"""
     user = get_current_user()
     if user.is_super:
         permissions = db.session.query(Permission).all()
@@ -82,12 +81,12 @@ def get_permissions():
 
 @api.get("/refresh")
 def refresh():
-    """更新令牌"""
+    """update token"""
     try:
         verify_jwt_in_request(refresh=True)
     except Exception as e:
         print(e)
-        return RefreshException(message="更新令牌失败，请重新登录")
+        return RefreshException(message="Failed to update the token, please log in again")
 
     identity = get_jwt_identity()
     if identity:
