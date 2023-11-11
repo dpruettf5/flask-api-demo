@@ -4,7 +4,7 @@
 
 
 def response(code=0, message="ok", **kwargs):
-    """响应体数据格式"""
+    """response body format"""
     data = {"code": code, "message": message}
     data.update(**kwargs)
     return data
