@@ -10,22 +10,22 @@ from app.form import PageModel
 
 
 class JobQuery(PageModel):
-    status: JobStatus = Field(..., description="任务状态")
+    status: JobStatus = Field(..., description="job status")
 
 
 class JobPath(BaseModel):
-    job_id: str = Field(..., description="任务UUID")
+    job_id: str = Field(..., description="job ID")
 
 
 class JobResponse(BaseModel):
     job_id: str = Field(..., description="UUID")
-    args: List[Any] = Field(None, description="参数")
-    kwargs: Dict[str, Any] = Field(None, description="关键字参数")
-    result: Any = Field(None, description="结果")
-    enqueued_at: str = Field(None, description="入队时间")
-    started_at: str = Field(None, description="开始时间")
-    ended_at: str = Field(None, description="结束时间")
-    exc_info: str = Field(None, description="异常信息")
-    origin: str = Field(None, description="所在队列")
-    job_status: str = Field(None, description="状态")
-    ttl: str = Field(None, description="存活时间")
+    args: List[Any] = Field(None, description="parameter")
+    kwargs: Dict[str, Any] = Field(None, description="keyword parameters")
+    result: Any = Field(None, description="result")
+    enqueued_at: str = Field(None, description="time queued")
+    started_at: str = Field(None, description="time started")
+    ended_at: str = Field(None, description="time ended")
+    exc_info: str = Field(None, description="exception info")
+    origin: str = Field(None, description="origin")
+    job_status: str = Field(None, description="job status")
+    ttl: str = Field(None, description="ttl")
