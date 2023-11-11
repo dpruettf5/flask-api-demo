@@ -14,21 +14,20 @@ from app.utils.exceptions import AuthException, InvalidTokenException, UserNotEx
 
 jwt_manager = JWTManager()
 
-# 存放所有权限，数据库初始化时使用
 permissions = []
 
 
 def role_required(name, module, uuid):
     """
-    装饰器工厂函数
-    :param name: 权限名称
-    :param module: 权限模块
-    :param uuid: 唯一ID
+    decoratoer factory func
+    :param name: params name
+    :param module: params module
+    :param uuid: param uuid
     :return: decorator
     """
 
     def decorator(func):
-        """装饰器，为func添加权限属性"""
+        """decorator to add permissions to func"""
         global permissions
         permissions.append([name, module, uuid])
         setattr(func, "uuid", uuid)
@@ -42,7 +41,7 @@ def role_required(name, module, uuid):
             if is_user_allowed(user, func.uuid):
                 return func(*args, **kwargs)
             else:
-                raise AuthException(message="权限不足")
+                raise AuthException(message="bad permissions")
 
         return wrapper
 
@@ -50,7 +49,7 @@ def role_required(name, module, uuid):
 
 
 def login_required(func):
-    """登录装饰器"""
+    """login required"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -70,17 +69,16 @@ def user_lookup_loader_callback(_, jwt_payload):
 
 @jwt_manager.expired_token_loader
 def expired_token_callback(jwt_headers, jwt_payload):
-    """token过期处理"""
+    """token expired callback"""
     print("expired_token_callback:", jwt_headers, jwt_payload)
     return ExpiredTokenException()
 
 
 @jwt_manager.invalid_token_loader
 def invalid_token_callback(e):
-    """无效token处理"""
+    """invalid token"""
     print("invalid_token_callback:", e)
     if e == "Only non-refresh tokens are allowed":
-        # 错误把refresh-token当成access-token使用的情况
         return InvalidAccessTokenException()
     return InvalidTokenException()
 
@@ -104,7 +102,7 @@ def get_token(user):
 
 
 def is_user_allowed(user, uuid):
-    """判断用户是否有权限"""
+    """determine if user has permissions"""
     if user.is_super:
         return True
     roles = user.roles
