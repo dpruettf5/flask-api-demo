@@ -17,7 +17,7 @@ migrate = Migrate(app, db, render_as_batch=False)
 
 @app.route("/")
 def index():
-    """根目录重定向到openapi"""
+    """root redire to openapi"""
     return redirect(url_for("openapi.openapi"))
 
 
@@ -33,12 +33,12 @@ def test(a, b):
 @app.cli.command("init_db")
 @with_appcontext
 def init_db():
-    """初始化数据库"""
+    """init db"""
     from app.model.user import User, Permission, Role
     from app.utils.jwt_tools import permissions
     user = db.session.query(User).filter(User.username == "super").first()
     if user:
-        print("超级管理员已存在.")
+        print("super admin exists")
     else:
         user = User()
         user.username = "super"
@@ -47,7 +47,7 @@ def init_db():
         user.is_active = True
         db.session.add(user)
         db.session.commit()
-        print("添加超级管理员成功.")
+        print("added super admin")
 
     for name, module, uuid in permissions:
         permission = db.session.query(Permission).filter_by(name=name).first()
@@ -61,23 +61,23 @@ def init_db():
         db.session.add(permission)
         db.session.commit()
         print(permission.name, "is success.")
-    print("添加权限成功.")
-    role = db.session.query(Role).filter_by(name="普通用户").first()
+    print("added permission")
+    role = db.session.query(Role).filter_by(name="regular user").first()
     if role:
-        print("普通用户角色已存在.")
+        print("role exists.")
     else:
         role = Role()
-        role.name = "普通用户"
-        role.describe = "默认权限组"
+        role.name = "regular users"
+        role.describe = "default permission group"
         db.session.add(role)
         db.session.commit()
-        print("添加普通用户角色成功.")
+        print("user role added")
 
 
 @app.cli.command("register_permission")
 @with_appcontext
 def register_permission():
-    """注册权限"""
+    ""enrollment permissions"""
     from app.utils.jwt_tools import permissions
     from app.model import db
     from app.model.user import Permission
