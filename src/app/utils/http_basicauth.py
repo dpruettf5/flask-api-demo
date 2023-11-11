@@ -10,7 +10,7 @@ from app.utils.exceptions import PasswordException
 
 
 def basic_required(func):
-    """HTTP Basic装饰器"""
+    """HTTP Basic"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
