@@ -35,12 +35,12 @@ role_permission = db.Table(
 class User(Base):
     __tablename__ = "user"
     __table_args__ = ({"comment": "用户表"})
-    username = db.Column(db.String(32), unique=True, nullable=False, comment="用户名")
-    fullname = db.Column(db.String(32), unique=False, nullable=False, default="", comment="姓名")
-    email = db.Column(db.String(32), unique=True, nullable=True, comment="邮箱")
-    is_super = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment="是否是超级管理员")
-    is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment="是否激活")
-    _password = db.Column("password", db.Text, comment="密码")
+    username = db.Column(db.String(32), unique=True, nullable=False, comment="username")
+    fullname = db.Column(db.String(32), unique=False, nullable=False, default="", comment="full name")
+    email = db.Column(db.String(32), unique=True, nullable=True, comment="email")
+    is_super = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment="is super")
+    is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment="is active")
+    _password = db.Column("password", db.Text, comment="password")
 
     roles = db.relationship("Role", secondary=user_role, back_populates="users")
 
@@ -59,7 +59,7 @@ class User(Base):
 
     def modify_password(self, old_password=None, new_password=None, confirm_password=None, admin=False):
         if new_password != confirm_password:
-            raise PasswordException(message="密码不一致")
+            raise PasswordException(message="passwords do not match")
         if admin:
             self.password = new_password
             db.session.commit()
@@ -68,7 +68,7 @@ class User(Base):
             self.password = new_password
             db.session.commit()
         else:
-            raise PasswordException(message="原始密码错误")
+            raise PasswordException(message="password incorrect")
 
     @classmethod
     def create(cls, body: RegisterBody):
@@ -97,20 +97,20 @@ class User(Base):
     @classmethod
     def verify_register(cls, model: RegisterBody):
         if db.session.query(cls).filter(cls.username == model.username).first():
-            raise UserExistException(message="用户名不可用")
+            raise UserExistException(message="username taken")
         if db.session.query(cls).filter(cls.email == model.email).first():
             raise EmailExistException()
         if model.password != model.confirm_password:
-            raise PasswordException(message="密码不一致")
+            raise PasswordException(message="passwords do not match")
 
     @classmethod
     def verify_login(cls, username, password):
         """验证用户名密码"""
         user = db.session.query(cls).filter(cls.username == username).first()
         if user is None:
-            raise PasswordException(message="用户名或密码错误")
+            raise PasswordException(message="wrong username or password")
         if not user.check_password(password):
-            raise PasswordException(message="用户名或密码错误")
+            raise PasswordException(message="wrong username or password")
         if not user.is_active:
             raise ActiveException()
         return user
@@ -118,9 +118,9 @@ class User(Base):
 
 class Role(Base):
     __tablename__ = "role"
-    __table_args__ = ({"comment": "角色表"})
-    name = db.Column(db.String(32), unique=True, comment="角色名称")
-    describe = db.Column(db.String(255), comment="角色描述")
+    __table_args__ = ({"comment": "role table"})
+    name = db.Column(db.String(32), unique=True, comment="role name")
+    describe = db.Column(db.String(255), comment="description")
 
     users = db.relationship("User", secondary=user_role, back_populates="roles")
     permissions = db.relationship("Permission", secondary=role_permission, back_populates="roles")
@@ -152,10 +152,10 @@ class Role(Base):
 
 class Permission(Base):
     __tablename__ = "permission"
-    __table_args__ = ({"comment": "权限表"})
-    name = db.Column(db.String(32), unique=True, comment="权限名称")
-    module = db.Column(db.String(32), comment="权限模块")
-    uuid = db.Column(db.String(255), unique=True, comment="权限uuid")
+    __table_args__ = ({"comment": "permission table"})
+    name = db.Column(db.String(32), unique=True, comment="permission name")
+    module = db.Column(db.String(32), comment="permissions module")
+    uuid = db.Column(db.String(255), unique=True, comment="uuid")
 
     roles = db.relationship("Role", secondary=role_permission, back_populates="permissions")
 
