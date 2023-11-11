@@ -1,6 +1,6 @@
 # flask-api-demo
 
-## 项目初始化
+## project initialization
 
 执行`sh init.sh PROJECT_NAME`
 
