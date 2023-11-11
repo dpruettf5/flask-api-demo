@@ -13,7 +13,7 @@ db = SQLAlchemy()
 
 
 def get_offset_limit(page, page_size):
-    """获取页码偏移量"""
+    """gets page number"""
     page = 1 if page < 1 else page
     limit = page_size
     offset = (page - 1) * limit
@@ -21,26 +21,24 @@ def get_offset_limit(page, page_size):
 
 
 def get_total_page(model, condition, limit):
-    """获取总个数、总页数"""
+    """get toal number of pages"""
     total = db.session.query(func.count(model.id)).filter(*condition).scalar()
     total_page = math.ceil(total / limit)
     return total, total_page
 
 
-def validate_name(model, name, message="名称"):
-    # 高并发场景下会失效
+def validate_name(model, name, message="name"):
     if db.session.query(model).filter(model.name == name).first():
-        raise ResourceExistException(message=f"{message}已存在")
+        raise ResourceExistException(message=f"{message}already exists")
 
 
-def validate_name_when_update(model, model_id, name, message="名称"):
-    # 高并发场景下会失效
+def validate_name_when_update(model, model_id, name, message="name"):
     if db.session.query(model).filter(model.id != model_id, model.name == name).first():
-        raise ResourceExistException(message=f"{message}已存在")
+        raise ResourceExistException(message=f"{message}already exists")
 
 
 class Base(db.Model):
-    """基础数据库模型：提供id、创建时间、更新时间"""
+    """Basic database model: provide the ID, creation time, and update time"""
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     create_time = db.Column(db.DateTime, default=datetime.now)
