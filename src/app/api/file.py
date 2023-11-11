@@ -14,13 +14,13 @@ from app.utils.exceptions import ResourceNotExistException
 __version__ = "/v1"
 __bp__ = "/file"
 url_prefix = API_PREFIX + __version__ + __bp__
-tag = Tag(name="文件", description="文件管理")
+tag = Tag(name="file", description="file management")
 api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
 
 
 @api.post("/upload")
 def upload_file(form: UploadFileForm):
-    """上传文件"""
+    """upload file"""
     print(form.file.filename)
     print(form.file_type)
     form.file.save(os.path.join(FILE_PATH, "test.jpg"))
@@ -29,7 +29,7 @@ def upload_file(form: UploadFileForm):
 
 @api.get("/<filename>")
 def download_file(path: DownloadFilePath):
-    """下载文件"""
+    """download file"""
     file = os.path.join(FILE_PATH, path.filename)
     if os.path.exists(file):
         return make_response(send_file(file, as_attachment=True))
@@ -38,7 +38,7 @@ def download_file(path: DownloadFilePath):
 
 @api.get("/image/<filename>")
 def get_image(path: DownloadFilePath):
-    """获取图片流"""
+    """get image"""
     image_content = b""
     try:
         file = os.path.join(FILE_PATH, path.filename)
