@@ -6,9 +6,9 @@ from pydantic import BaseModel, Field
 
 
 class BookBody(BaseModel):
-    name: str = Field(..., description="名称")
-    author: str = Field(None, description="作者")
+    name: str = Field(..., description="name")
+    author: str = Field(None, description="author")
 
 
 class BookQuery(BaseModel):
-    id: int = Field(..., description="图书id")
+    id: int = Field(..., description="id")
