@@ -7,8 +7,8 @@ from pydantic import BaseModel, Field
 
 class UploadFileForm(BaseModel):
     file: FileStorage
-    file_type: str = Field(None, description="文件类型")
+    file_type: str = Field(None, description="filetype")
 
 
 class DownloadFilePath(BaseModel):
-    filename: str = Field(None, description="文件名称")
+    filename: str = Field(None, description="filename")
