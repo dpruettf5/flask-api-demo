@@ -10,27 +10,27 @@ from app.form import JsonResponse
 
 
 class RegisterBody(BaseModel):
-    username: str = Field(..., min_length=4, max_length=32, description="用户名")
-    password: str = Field(..., min_length=6, description="密码")
-    confirm_password: str = Field(..., min_length=6, description="确认密码")
-    email: EmailStr = Field(..., description="邮箱")
-    role_ids: Optional[List[int]] = Field([], description="角色ID列表")
+    username: str = Field(..., min_length=4, max_length=32, description="username")
+    password: str = Field(..., min_length=6, description="password")
+    confirm_password: str = Field(..., min_length=6, description="confirm password")
+    email: EmailStr = Field(..., description="email")
+    role_ids: Optional[List[int]] = Field([], description="role id")
 
 
 class LoginBody(BaseModel):
-    username: str = Field(..., description="用户名")
-    password: str = Field(..., description="密码")
+    username: str = Field(..., description="username")
+    password: str = Field(..., description="password")
 
 
 class PasswordBody(BaseModel):
-    old_password: str = Field(..., description="密码")
-    new_password: str = Field(..., description="新密码")
-    confirm_password: str = Field(..., description="验证密码")
+    old_password: str = Field(..., description="old password")
+    new_password: str = Field(..., description="new password")
+    confirm_password: str = Field(..., description="confirm password")
 
 
 class UserData(BaseModel):
-    username: str = Field(..., description="用户名")
-    email: EmailStr = Field(..., description="邮箱")
+    username: str = Field(..., description="username")
+    email: EmailStr = Field(..., description="email")
 
 
 class UserInfoResponse(JsonResponse):
