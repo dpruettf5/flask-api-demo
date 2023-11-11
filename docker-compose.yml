@@ -32,7 +32,6 @@ services:
       - "20211:5432"
 
     environment:
-      # 使用上海时区
       - TZ=Asia/Shanghai
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=flask
